@@ -1,21 +1,20 @@
 package fr.unilim.spaceinvaders;
 
 public class Dimension {
-    int longueur;
-	   int hauteur;
+	int longueur;
+	int hauteur;
 
-	   public Dimension(int longueur, int hauteur) {
-		   this.longueur = longueur;
-		   this.hauteur = hauteur;
-	   }
+	public Dimension(int longueur, int hauteur) {
+		this.longueur = longueur;
+		this.hauteur = hauteur;
+	}
 
-	   public int longueur() {
-		   return this.longueur;
-	   }
+	public int longueur() {
+		return this.longueur;
+	}
 
-	   public int hauteur() {
-		 return this.hauteur;
-	   }
+	public int hauteur() {
+		return this.hauteur;
+	}
 
- }   
-
+}
