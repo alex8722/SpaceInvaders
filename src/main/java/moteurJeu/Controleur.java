@@ -87,6 +87,7 @@ public class Controleur implements KeyListener {
 		case KeyEvent.VK_SPACE:
 			this.commandeEnCours.tirer = true;
 			this.commandeARetourner.tirer = true;
+			break;
 		}
 	}
 
@@ -122,7 +123,7 @@ public class Controleur implements KeyListener {
 		case KeyEvent.VK_DOWN:
 			this.commandeEnCours.bas = false;
 			break;
-		case KeyEvent.VK_ESCAPE:
+		case KeyEvent.VK_SPACE:
 			this.commandeEnCours.tirer = false;
 			break;
 		}
