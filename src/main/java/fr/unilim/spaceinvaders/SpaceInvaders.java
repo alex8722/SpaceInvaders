@@ -2,12 +2,15 @@ package fr.unilim.spaceinvaders;
 
 import moteurJeu.Commande;
 import moteurJeu.Jeu;
-import utils.*;
+import utils.DebordementEspaceJeuException;
+import utils.HorsEspaceJeuException;
+import utils.MissileException;
 
 public class SpaceInvaders implements Jeu {
 	int longueur;
 	int hauteur;
 	Vaisseau vaisseau;
+	private Missile missile;
 
 	public SpaceInvaders(int longueur, int hauteur) {
 		this.longueur = longueur;
@@ -20,7 +23,7 @@ public class SpaceInvaders implements Jeu {
 				this.hauteur * 49 / 50);
 		positionnerUnNouveauVaisseau(dimensionVaisseau, positionVaisseau, Constante.VAISSEAU_VITESSE);
 	}
-	
+
 	public void positionnerUnNouveauVaisseau(Dimension dimension, Position position, int vitesse) {
 
 		int x = position.abscisse();
@@ -58,6 +61,18 @@ public class SpaceInvaders implements Jeu {
 		}
 	}
 
+	public void tirerUnMissile(Dimension dimension, int vitesse) {
+		if ((this.vaisseau.dimension.hauteur() + dimension.hauteur()) > this.hauteur) {
+			throw new MissileException("Il n'y a pas assez de hauteur libre pour placer le missile !");
+		} else {
+			this.missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
+		}
+	}
+
+	public Missile recupererUnMissile() {
+		return this.missile;
+	}
+
 	@Override
 	public void evoluer(Commande commandeUser) {
 		if (commandeUser.gauche) {
@@ -66,17 +81,34 @@ public class SpaceInvaders implements Jeu {
 		if (commandeUser.droite) {
 			deplacerVaisseauVersLaDroite();
 		}
+		if (commandeUser.tirer && !this.aUnMissile())
+			tirerUnMissile(new Dimension(Constante.MISSILE_LONGUEUR, Constante.MISSILE_HAUTEUR),
+					Constante.MISSILE_VITESSE);
 	}
 
 	private char recupererMarqueDeLaPosition(int x, int y) {
 		char marque;
-		if (aUnVaisseauQuiOccupeLaPosition(x, y))
+		if (this.aUnVaisseauQuiOccupeLaPosition(x, y))
 			marque = Constante.MARQUE_VAISSEAU;
+		else if (this.aUnMissileQuiOccupeLaPosition(x, y))
+			marque = Constante.MARQUE_MISSILE;
 		else
 			marque = Constante.MARQUE_VIDE;
 		return marque;
 	}
-	
+
+	private boolean aUnMissileQuiOccupeLaPosition(int x, int y) {
+		return this.aUnMissile() && aUnMissileQuiOccupe(x, y);
+	}
+
+	public boolean aUnMissileQuiOccupe(int x, int y) {
+		return this.missile.occupeLaPosition(x, y);
+	}
+
+	public boolean aUnMissile() {
+		return missile != null;
+	}
+
 	@Override
 	public boolean etreFini() {
 		return false;
@@ -93,7 +125,7 @@ public class SpaceInvaders implements Jeu {
 	public boolean aUnVaisseau() {
 		return vaisseau != null;
 	}
-	
+
 	private boolean estDansEspaceJeu(int x, int y) {
 		return ((x >= 0) && (x < longueur)) && ((y >= 0) && (y < hauteur));
 	}
@@ -101,7 +133,7 @@ public class SpaceInvaders implements Jeu {
 	public Vaisseau getVaisseau() {
 		return this.vaisseau;
 	}
-	
+
 	public String recupererEspaceJeuDansChaineASCII() {
 		StringBuilder espaceDeJeu = new StringBuilder();
 		for (int y = 0; y < hauteur; y++) {

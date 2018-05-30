@@ -19,7 +19,7 @@ public class Controleur implements KeyListener {
 	 * commande a retourner la difference avec la commandeencours vient du fait
 	 * qu'on veut memoriser une touche appuyee
 	 */
-	private  Commande commandeARetourner;
+	private Commande commandeARetourner;
 
 	/**
 	 * construction du controleur par defaut le controleur n'a pas de commande
@@ -30,8 +30,7 @@ public class Controleur implements KeyListener {
 	}
 
 	/**
-	 * quand on demande les commandes, le controleur retourne la commande en
-	 * cours
+	 * quand on demande les commandes, le controleur retourne la commande en cours
 	 * 
 	 * @return commande faite par le joueur
 	 */
@@ -42,12 +41,12 @@ public class Controleur implements KeyListener {
 	}
 
 	@Override
-	//Met a jour les commandes en fonctions des touches appuyees
+	// Met a jour les commandes en fonctions des touches appuyees
 	public void keyPressed(KeyEvent e) {
-		//qdzs KEYS
+		// qdzs KEYS
 		switch (e.getKeyChar()) {
 		// si on appuie sur 'q',commande joueur est gauche
-		case 'q' :
+		case 'q':
 			this.commandeEnCours.gauche = true;
 			this.commandeARetourner.gauche = true;
 			break;
@@ -67,7 +66,7 @@ public class Controleur implements KeyListener {
 			this.commandeARetourner.bas = true;
 			break;
 		}
-		//LEFT,RIGHT,UP,DOWN ARROWS
+		// LEFT,RIGHT,UP,DOWN ARROWS
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			this.commandeEnCours.gauche = true;
@@ -85,15 +84,16 @@ public class Controleur implements KeyListener {
 			this.commandeEnCours.bas = true;
 			this.commandeARetourner.bas = true;
 			break;
-		default:
-			break;
+		case KeyEvent.VK_SPACE:
+			this.commandeEnCours.tirer = true;
+			this.commandeARetourner.tirer = true;
 		}
 	}
 
 	@Override
-	//Met a jour les commandes quand le joueur relache une touche
+	// Met a jour les commandes quand le joueur relache une touche
 	public void keyReleased(KeyEvent e) {
-		//qdzs KEYS
+		// qdzs KEYS
 		switch (e.getKeyChar()) {
 		case 'q':
 			this.commandeEnCours.gauche = false;
@@ -108,7 +108,7 @@ public class Controleur implements KeyListener {
 			this.commandeEnCours.bas = false;
 			break;
 		}
-		//LEFT,RIGHT,UP,DOWN ARROWS
+		// LEFT,RIGHT,UP,DOWN ARROWS
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			this.commandeEnCours.gauche = false;
@@ -122,7 +122,8 @@ public class Controleur implements KeyListener {
 		case KeyEvent.VK_DOWN:
 			this.commandeEnCours.bas = false;
 			break;
-		default: break;
+		case KeyEvent.VK_ESCAPE:
+			this.commandeEnCours.tirer = false;
 		}
 
 	}

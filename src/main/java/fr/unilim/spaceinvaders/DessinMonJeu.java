@@ -9,24 +9,34 @@ import moteurJeu.DessinJeu;
 
 public class DessinMonJeu implements DessinJeu {
 
-	private SpaceInvaders jeu;
+	private SpaceInvaders spaceinvaders;
 
 	public DessinMonJeu(SpaceInvaders j) {
-		this.jeu = j;
+		this.spaceinvaders = j;
 	}
 
-	private void dessinerObjet(Vaisseau vaisseau, BufferedImage im) {
+	private void dessinerVaisseau(Vaisseau vaisseau, BufferedImage im) {
 		Graphics2D crayon = (Graphics2D) im.getGraphics();
-		crayon.setColor(Color.blue);
+		crayon.setColor(Color.gray);
 		crayon.fillOval(vaisseau.abscisseLaPlusAGauche(), vaisseau.ordonneeLaPlusBasse(), vaisseau.dimension.longueur(),
 				vaisseau.dimension.hauteur());
+	}
 
+	private void dessinerMissile(Missile missile, BufferedImage im) {
+		Graphics2D crayon = (Graphics2D) im.getGraphics();
+		crayon.setColor(Color.blue);
+		crayon.fillOval(missile.abscisseLaPlusAGauche(), missile.ordonneeLaPlusBasse(), missile.dimension.longueur(),
+				missile.dimension.hauteur());
 	}
 
 	public void dessiner(BufferedImage image) {
-		if (this.jeu.aUnVaisseau()) {
-			Vaisseau vaisseau = jeu.getVaisseau();
-			this.dessinerObjet(vaisseau, image);
+		if (this.spaceinvaders.aUnVaisseau()) {
+			Vaisseau vaisseau = spaceinvaders.getVaisseau();
+			this.dessinerVaisseau(vaisseau, image);
+		}
+		if(this.spaceinvaders.aUnMissile()){
+			Missile missile = this.spaceinvaders.recupererUnMissile();
+			this.dessinerMissile(missile, image);
 		}
 	}
 
