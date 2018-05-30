@@ -5,18 +5,14 @@ import moteurJeu.Jeu;
 import utils.*;
 
 public class SpaceInvaders implements Jeu {
-	// ATTRIBUTS
 	int longueur;
 	int hauteur;
 	Vaisseau vaisseau;
 
-	// CONSTRUCTEUR
 	public SpaceInvaders(int longueur, int hauteur) {
 		this.longueur = longueur;
 		this.hauteur = hauteur;
 	}
-
-	// METHODES
 
 	public void initialiserJeu() {
 		Dimension dimensionVaisseau = new Dimension(Constante.VAISSEAU_LONGUEUR, Constante.VAISSEAU_HAUTEUR);
