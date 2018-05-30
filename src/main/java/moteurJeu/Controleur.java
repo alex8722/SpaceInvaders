@@ -124,6 +124,7 @@ public class Controleur implements KeyListener {
 			break;
 		case KeyEvent.VK_ESCAPE:
 			this.commandeEnCours.tirer = false;
+			break;
 		}
 
 	}

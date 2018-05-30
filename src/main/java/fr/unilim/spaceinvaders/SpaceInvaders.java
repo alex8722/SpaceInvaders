@@ -10,7 +10,7 @@ public class SpaceInvaders implements Jeu {
 	int longueur;
 	int hauteur;
 	Vaisseau vaisseau;
-	private Missile missile;
+	Missile missile;
 
 	public SpaceInvaders(int longueur, int hauteur) {
 		this.longueur = longueur;
@@ -19,8 +19,7 @@ public class SpaceInvaders implements Jeu {
 
 	public void initialiserJeu() {
 		Dimension dimensionVaisseau = new Dimension(Constante.VAISSEAU_LONGUEUR, Constante.VAISSEAU_HAUTEUR);
-		Position positionVaisseau = new Position(this.longueur / 2 - Constante.VAISSEAU_LONGUEUR / 2,
-				this.hauteur * 49 / 50);
+		Position positionVaisseau = new Position(this.longueur / 2 - Constante.VAISSEAU_LONGUEUR / 2, this.hauteur - 1);
 		positionnerUnNouveauVaisseau(dimensionVaisseau, positionVaisseau, Constante.VAISSEAU_VITESSE);
 	}
 
@@ -46,7 +45,7 @@ public class SpaceInvaders implements Jeu {
 
 	public void deplacerVaisseauVersLaDroite() {
 		if (vaisseau.abscisseLaPlusADroite() < (longueur - 1)) {
-			vaisseau.seDeplacerVersLaDroite();
+			vaisseau.deplacerHorizontalementVers(Direction.DROITE);
 			if (!estDansEspaceJeu(vaisseau.abscisseLaPlusADroite(), vaisseau.ordonneeLaPlusHaute())) {
 				vaisseau.positionner(longueur - vaisseau.dimension.longueur(), vaisseau.ordonneeLaPlusHaute());
 			}
@@ -55,7 +54,7 @@ public class SpaceInvaders implements Jeu {
 
 	public void deplacerVaisseauVersLaGauche() {
 		if (0 < vaisseau.abscisseLaPlusAGauche())
-			vaisseau.seDeplacerVersLaGauche();
+			vaisseau.deplacerHorizontalementVers(Direction.GAUCHE);
 		if (!estDansEspaceJeu(vaisseau.abscisseLaPlusAGauche(), vaisseau.ordonneeLaPlusHaute())) {
 			vaisseau.positionner(0, vaisseau.ordonneeLaPlusHaute());
 		}
@@ -81,19 +80,38 @@ public class SpaceInvaders implements Jeu {
 		if (commandeUser.droite) {
 			deplacerVaisseauVersLaDroite();
 		}
-		if (commandeUser.tirer && !this.aUnMissile())
+		if (commandeUser.tirer && !this.aUnMissile()) {
 			tirerUnMissile(new Dimension(Constante.MISSILE_LONGUEUR, Constante.MISSILE_HAUTEUR),
 					Constante.MISSILE_VITESSE);
+
+		}
+		if (this.aUnMissile()) {
+			deplacerMissile();
+			System.out.println("arr");
+			if (!estDansEspaceJeu(this.missile.abscisseLaPlusAGauche(), this.missile.ordonneeLaPlusBasse())) {
+				detruireMissile();
+				System.out.println("arrét");
+			}
+		}
+	}
+
+	public void deplacerMissile() {
+		missile.deplacerVerticalementVers(Direction.HAUT_ECRAN);
+	}
+
+	private void detruireMissile() {
+		this.missile = null;
 	}
 
 	private char recupererMarqueDeLaPosition(int x, int y) {
 		char marque;
-		if (this.aUnVaisseauQuiOccupeLaPosition(x, y))
+		if (aUnVaisseauQuiOccupeLaPosition(x, y)) {
 			marque = Constante.MARQUE_VAISSEAU;
-		else if (this.aUnMissileQuiOccupeLaPosition(x, y))
+		} else if (aUnMissileQuiOccupeLaPosition(x, y)) {
 			marque = Constante.MARQUE_MISSILE;
-		else
+		} else {
 			marque = Constante.MARQUE_VIDE;
+		}
 		return marque;
 	}
 
