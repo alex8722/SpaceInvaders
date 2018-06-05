@@ -206,14 +206,21 @@ public class SpaceInvaders implements Jeu {
 		return this.envahisseur;
 	}
 
-	public void deplacerEnvahisseurVersLaGauche() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public void deplacerEnvahisseurVersLaDroite() {
-		// TODO Auto-generated method stub
-		
+		if (envahisseur.abscisseLaPlusADroite() < (longueur - 1)) {
+			envahisseur.deplacerHorizontalementVers(Direction.DROITE);
+			if (!estDansEspaceJeu(envahisseur.abscisseLaPlusADroite(), envahisseur.ordonneeLaPlusHaute())) {
+				envahisseur.positionner(longueur - envahisseur.dimension.longueur(), envahisseur.ordonneeLaPlusHaute());
+			}
+		}
+	}
+
+	public void deplacerEnvahisseurVersLaGauche() {
+		if (0 < envahisseur.abscisseLaPlusAGauche())
+			envahisseur.deplacerHorizontalementVers(Direction.GAUCHE);
+		if (!estDansEspaceJeu(envahisseur.abscisseLaPlusAGauche(), envahisseur.ordonneeLaPlusHaute())) {
+			envahisseur.positionner(0, envahisseur.ordonneeLaPlusHaute());
+		}
 	}
 
 }
