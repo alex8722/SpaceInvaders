@@ -12,10 +12,12 @@ public class SpaceInvaders implements Jeu {
 	Vaisseau vaisseau;
 	Missile missile;
 	Envahisseur envahisseur;
+	boolean envahisseurVaAGauche;
 
 	public SpaceInvaders(int longueur, int hauteur) {
 		this.longueur = longueur;
 		this.hauteur = hauteur;
+		envahisseurVaAGauche = true;
 	}
 
 	public void initialiserJeu() {
@@ -38,8 +40,6 @@ public class SpaceInvaders implements Jeu {
 		if (!estDansEspaceJeu(x, y))
 			throw new HorsEspaceJeuException("La position de l'envahisseur est en dehors de l'espace jeu");
 
-		Dimension dimensionEnvahisseur = dimension;
-
 		if (!estDansEspaceJeu(x + dimension.longueur - 1, y))
 			throw new DebordementEspaceJeuException(
 					"L'envahisseur déborde de l'espace jeu vers la droite à cause de sa longueur");
@@ -57,8 +57,6 @@ public class SpaceInvaders implements Jeu {
 
 		if (!estDansEspaceJeu(x, y))
 			throw new HorsEspaceJeuException("La position du vaisseau est en dehors de l'espace jeu");
-
-		Dimension dimensionVaisseau = dimension;
 
 		if (!estDansEspaceJeu(x + dimension.longueur - 1, y))
 			throw new DebordementEspaceJeuException(
@@ -116,6 +114,20 @@ public class SpaceInvaders implements Jeu {
 			deplacerMissile();
 			if (!estDansEspaceJeu(this.missile.abscisseLaPlusAGauche(), this.missile.ordonneeLaPlusBasse())) {
 				detruireMissile();
+			}
+		}
+		if (envahisseurVaAGauche) {
+			if (envahisseur.abscisseLaPlusAGauche() <= 0) {
+				envahisseurVaAGauche = false;
+			} else {
+				deplacerEnvahisseurVersLaGauche();
+			}
+		}
+		if (!envahisseurVaAGauche) {
+			if (envahisseur.abscisseLaPlusADroite() >= Constante.ESPACEJEU_LONGUEUR-1) {
+				envahisseurVaAGauche = true;
+			} else {
+				deplacerEnvahisseurVersLaDroite();
 			}
 		}
 	}

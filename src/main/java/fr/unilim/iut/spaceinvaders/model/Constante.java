@@ -12,9 +12,8 @@ public class Constante {
     
   //Les informations concernant les envahisseurs
     public static final int ENVAHISSEUR_LONGUEUR = 30;
-    public static final int ENVAHISSEUR_HAUTEUR = 30;    
-    public static final int ENVAHISSEUR_VITESSE_VERTICAL = 5;    
-    public static final int ENVAHISSEUR_VITESSE_HORIZONTAL = 3;
+    public static final int ENVAHISSEUR_HAUTEUR = 30;  
+    public static final int ENVAHISSEUR_VITESSE_HORIZONTAL = 2;
     
     //Les informations concernant le missile
     
