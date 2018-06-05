@@ -1,4 +1,4 @@
-package Test;
+package fr.unilim.iut.spaceinvaders.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -6,8 +6,11 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.unilim.spaceinvaders.*;
-import utils.*;
+import fr.unilim.iut.spaceinvaders.*;
+import fr.unilim.iut.spaceinvaders.model.Dimension;
+import fr.unilim.iut.spaceinvaders.model.Position;
+import fr.unilim.iut.spaceinvaders.model.Vaisseau;
+import fr.unilim.iut.spaceinvaders.utils.*;
 
 public class VaisseauTest {
 

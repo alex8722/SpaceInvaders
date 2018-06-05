@@ -1,4 +1,4 @@
-package fr.unilim.spaceinvaders;
+package fr.unilim.iut.spaceinvaders.model;
 
 public enum Direction {
 	HAUT(1), BAS(-1), GAUCHE(-1), DROITE(1),

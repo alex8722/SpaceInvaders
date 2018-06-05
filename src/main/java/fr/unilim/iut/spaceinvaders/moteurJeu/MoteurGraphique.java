@@ -1,4 +1,4 @@
-package moteurJeu;
+package fr.unilim.iut.spaceinvaders.moteurJeu;
 
 
 /**
@@ -55,7 +55,7 @@ public class MoteurGraphique {
 			// affiche le jeu
 			this.gui.dessiner();
 			// met en attente
-			Thread.sleep(50);
+			Thread.sleep(10);
 		}
 	}
 

@@ -1,24 +1,24 @@
-package fr.unilim.spaceinvaders;
+package fr.unilim.iut.spaceinvaders.model;
 
 public abstract class Sprite {
 
 	protected Position origine;
 	protected Dimension dimension;
-	protected int vitesse;
+	protected int vitesseHorizontal;
 
 	public Sprite(Dimension dimension, Position origine, int vitesse) {
 		super();
 		this.dimension = dimension;
 		this.origine = origine;
-		this.vitesse = vitesse;
+		this.vitesseHorizontal = vitesse;
 	}
 
 	public void deplacerVerticalementVers(Direction direction) {
-		this.origine.changerOrdonnee(this.origine.ordonnee() + direction.valeur() * vitesse);
+		this.origine.changerOrdonnee(this.origine.ordonnee() + direction.valeur() * vitesseHorizontal);
 	}
 
 	public void deplacerHorizontalementVers(Direction direction) {
-		this.origine.changerAbscisse(this.origine.abscisse() + direction.valeur() * vitesse);
+		this.origine.changerAbscisse(this.origine.abscisse() + direction.valeur() * vitesseHorizontal);
 	}
 
 	public void positionner(int x, int y) {
