@@ -98,7 +98,7 @@ public class SpaceInvaders implements Jeu {
 		} else {
 			if (nombreDeMissile < Constante.NOMBRE_MISSILE) {
 				if (nombreDeMissile >= 1) {
-					if (this.missiles.get(nombreDeMissile - 1).ordonneeLaPlusBasse() < Constante.OrdonneLaPlusBasseAvantNouveauTir) {
+					if (this.missiles.get(nombreDeMissile - 1).ordonneeLaPlusHaute() < ordonneLaPlusBasseAvantNouveauTir()) {
 						Missile missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
 						this.missiles.add(missile);
 						nombreDeMissile++;
@@ -112,10 +112,11 @@ public class SpaceInvaders implements Jeu {
 		}
 	}
 
-	/*public int ordonneLaPlusBasseAvantNouveauTir() {
-		int ordonneLaPlusBasseAvantNouveauTir = vaisseau.ordonneeLaPlusHaute()-Constante.MISSILE_HAUTEUR-2;
+	public int ordonneLaPlusBasseAvantNouveauTir() {
+		int ordonneLaPlusBasseAvantNouveauTir = vaisseau.ordonneeLaPlusBasse()-Constante.MISSILE_HAUTEUR-1;
+		ordonneLaPlusBasseAvantNouveauTir = Constante.OrdonneLaPlusBasseAvantNouveauTir;
 		return ordonneLaPlusBasseAvantNouveauTir;
-	}*/
+	}
 
 	public List<Missile> recupererListeMissiles() {
 		return this.missiles;
