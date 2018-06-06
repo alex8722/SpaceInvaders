@@ -224,10 +224,36 @@ public class SpaceInvadersTest {
 		spaceinvaders.positionnerUnNouveauVaisseau(new Dimension(7, 2), new Position(5, 9), 2);
 		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 2);
 
-		spaceinvaders.deplacerMissile();
+		spaceinvaders.deplacerMissile(0);
 
 		assertEquals("" + "...............\n" + "...............\n" + "...............\n" + "...............\n"
 				+ ".......MMM.....\n" + ".......MMM.....\n" + "...............\n" + "...............\n"
+				+ ".....VVVVVVV...\n" + ".....VVVVVVV...\n", spaceinvaders.recupererEspaceJeuDansChaineASCII());
+	}
+	
+	// Avoir Plusieurs Missiles à l'écran
+	@Test
+	public void test_DeuxMissile() {
+
+		spaceinvaders.positionnerUnNouveauVaisseau(new Dimension(7, 2), new Position(5, 9), 2);
+		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 2);
+		spaceinvaders.deplacerMissile(0);
+		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 2);
+
+		assertEquals("" + "...............\n" + "...............\n" + "...............\n" + "...............\n"
+				+ ".......MMM.....\n" + ".......MMM.....\n" + ".......MMM.....\n" + ".......MMM.....\n"
+				+ ".....VVVVVVV...\n" + ".....VVVVVVV...\n", spaceinvaders.recupererEspaceJeuDansChaineASCII());
+	}
+	
+	@Test
+	public void test_AvoirDeLaPlacePourDeuxMissile() {
+
+		spaceinvaders.positionnerUnNouveauVaisseau(new Dimension(7, 2), new Position(5, 9), 2);
+		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 2);
+		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 2);
+
+		assertEquals("" + "...............\n" + "...............\n" + "...............\n" + "...............\n"
+				+ "...............\n" + "...............\n" + ".......MMM.....\n" + ".......MMM.....\n"
 				+ ".....VVVVVVV...\n" + ".....VVVVVVV...\n", spaceinvaders.recupererEspaceJeuDansChaineASCII());
 	}
 
@@ -237,10 +263,10 @@ public class SpaceInvadersTest {
 		spaceinvaders.positionnerUnNouveauVaisseau(new Dimension(7, 2), new Position(5, 9), 1);
 		spaceinvaders.tirerUnMissile(new Dimension(3, 2), 1);
 		for (int i = 0; i <= 6; i++) {
-			spaceinvaders.deplacerMissile();
+			spaceinvaders.deplacerMissile(0);
 		}
 
-		spaceinvaders.deplacerMissile();
+		spaceinvaders.deplacerMissile(0);
 
 		assertEquals("" + "...............\n" + "...............\n" + "...............\n" + "...............\n"
 				+ "...............\n" + "...............\n" + "...............\n" + "...............\n"

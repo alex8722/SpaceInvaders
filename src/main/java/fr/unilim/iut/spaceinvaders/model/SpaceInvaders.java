@@ -1,5 +1,9 @@
 package fr.unilim.iut.spaceinvaders.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.unilim.iut.spaceinvaders.moteurJeu.Collision;
 import fr.unilim.iut.spaceinvaders.moteurJeu.Commande;
 import fr.unilim.iut.spaceinvaders.moteurJeu.Jeu;
 import fr.unilim.iut.spaceinvaders.utils.DebordementEspaceJeuException;
@@ -10,14 +14,17 @@ public class SpaceInvaders implements Jeu {
 	int longueur;
 	int hauteur;
 	Vaisseau vaisseau;
-	Missile missile;
+	List<Missile> missiles = new ArrayList<Missile>();
 	Envahisseur envahisseur;
-	boolean envahisseurVaAGauche;
+	private boolean envahisseurVaAGauche;
+	private boolean fini;
+	int nombreDeMissile;
 
 	public SpaceInvaders(int longueur, int hauteur) {
 		this.longueur = longueur;
 		this.hauteur = hauteur;
-		envahisseurVaAGauche = true;
+		this.fini = false;
+		this.nombreDeMissile = 0;
 	}
 
 	public void initialiserJeu() {
@@ -89,133 +96,82 @@ public class SpaceInvaders implements Jeu {
 		if ((this.vaisseau.dimension.hauteur() + dimension.hauteur()) > this.hauteur) {
 			throw new MissileException("Il n'y a pas assez de hauteur libre pour placer le missile !");
 		} else {
-			this.missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
+			if (nombreDeMissile < Constante.NOMBRE_MISSILE) {
+				if (nombreDeMissile >= 1) {
+					if (this.missiles.get(nombreDeMissile - 1).ordonneeLaPlusBasse() < Constante.OrdonneLaPlusBasseAvantNouveauTir) {
+						Missile missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
+						this.missiles.add(missile);
+						nombreDeMissile++;
+					}
+				} else {
+					Missile missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
+					this.missiles.add(missile);
+					nombreDeMissile++;
+					System.out.println("Pan");
+				}
+			}
 		}
 	}
 
-	public Missile recupererUnMissile() {
-		return this.missile;
+	/*public int ordonneLaPlusBasseAvantNouveauTir() {
+		int ordonneLaPlusBasseAvantNouveauTir = vaisseau.ordonneeLaPlusHaute()-Constante.MISSILE_HAUTEUR-2;
+		return ordonneLaPlusBasseAvantNouveauTir;
+	}*/
+
+	public List<Missile> recupererListeMissiles() {
+		return this.missiles;
 	}
 
 	@Override
 	public void evoluer(Commande commandeUser) {
+		int indexMissile = 0;
 		if (commandeUser.gauche) {
 			deplacerVaisseauVersLaGauche();
 		}
 		if (commandeUser.droite) {
 			deplacerVaisseauVersLaDroite();
 		}
-		if (commandeUser.tirer && !this.aUnMissile()) {
+		if (commandeUser.tirer) {
 			tirerUnMissile(new Dimension(Constante.MISSILE_LONGUEUR, Constante.MISSILE_HAUTEUR),
 					Constante.MISSILE_VITESSE);
 
 		}
 		if (this.aUnMissile()) {
-			deplacerMissile();
-			if (!estDansEspaceJeu(this.missile.abscisseLaPlusAGauche(), this.missile.ordonneeLaPlusBasse())) {
-				detruireMissile();
+			for (int index = 0; index < nombreDeMissile; index++) {
+				deplacerMissile(index);
+				indexMissile = this.missiles.indexOf(this.missiles.get(index));
+				if (!estDansEspaceJeu(this.missiles.get(index).abscisseLaPlusAGauche(),
+						this.missiles.get(index).ordonneeLaPlusBasse())) {
+					detruireMissile(indexMissile);
+				} else {
+					if (this.aUnEnvahisseur()) {
+						if (Collision.detecterCollision(this.missiles.get(index), envahisseur)) {
+							detruireMissile(indexMissile);
+							detruireEnvahisseur();
+							fini = true;
+						}
+					}
+				}
 			}
 		}
-		if (envahisseurVaAGauche) {
-			if (envahisseur.abscisseLaPlusAGauche() <= 0) {
-				envahisseurVaAGauche = false;
-			} else {
-				deplacerEnvahisseurVersLaGauche();
+
+		if (this.aUnEnvahisseur()) {
+			if (envahisseurVaAGauche) {
+				if (envahisseur.abscisseLaPlusAGauche() <= 0) {
+					envahisseurVaAGauche = false;
+				} else {
+					deplacerEnvahisseurVersLaGauche();
+				}
+			}
+			if (!envahisseurVaAGauche) {
+				if (envahisseur.abscisseLaPlusADroite() >= Constante.ESPACEJEU_LONGUEUR - 1) {
+					envahisseurVaAGauche = true;
+				} else {
+					deplacerEnvahisseurVersLaDroite();
+				}
 			}
 		}
-		if (!envahisseurVaAGauche) {
-			if (envahisseur.abscisseLaPlusADroite() >= Constante.ESPACEJEU_LONGUEUR-1) {
-				envahisseurVaAGauche = true;
-			} else {
-				deplacerEnvahisseurVersLaDroite();
-			}
-		}
-	}
 
-	public void deplacerMissile() {
-		missile.deplacerVerticalementVers(Direction.HAUT_ECRAN);
-	}
-
-	private void detruireMissile() {
-		this.missile = null;
-	}
-
-	private char recupererMarqueDeLaPosition(int x, int y) {
-		char marque;
-		if (aUnVaisseauQuiOccupeLaPosition(x, y)) {
-			marque = Constante.MARQUE_VAISSEAU;
-		} else if (aUnMissileQuiOccupeLaPosition(x, y)) {
-			marque = Constante.MARQUE_MISSILE;
-		} else if (aUnEnvahisseurQuiOccupeLaPosition(x, y)) {
-			marque = Constante.MARQUE_ENVAHISSEUR;
-		} else {
-			marque = Constante.MARQUE_VIDE;
-		}
-		return marque;
-	}
-
-	private boolean aUnMissileQuiOccupeLaPosition(int x, int y) {
-		return this.aUnMissile() && aUnMissileQuiOccupe(x, y);
-	}
-
-	public boolean aUnMissileQuiOccupe(int x, int y) {
-		return this.missile.occupeLaPosition(x, y);
-	}
-
-	public boolean aUnMissile() {
-		return missile != null;
-	}
-
-	@Override
-	public boolean etreFini() {
-		return false;
-	}
-
-	public boolean aUnVaisseauQuiOccupeLaPosition(int x, int y) {
-		return this.aUnVaisseau() && aUnVaisseauQuiOccupe(x, y);
-	}
-
-	public boolean aUnVaisseauQuiOccupe(int x, int y) {
-		return vaisseau.occupeLaPosition(x, y);
-	}
-
-	public boolean aUnVaisseau() {
-		return vaisseau != null;
-	}
-
-	private boolean estDansEspaceJeu(int x, int y) {
-		return ((x >= 0) && (x < longueur)) && ((y >= 0) && (y < hauteur));
-	}
-
-	public Vaisseau getVaisseau() {
-		return this.vaisseau;
-	}
-
-	public String recupererEspaceJeuDansChaineASCII() {
-		StringBuilder espaceDeJeu = new StringBuilder();
-		for (int y = 0; y < hauteur; y++) {
-			for (int x = 0; x < longueur; x++) {
-				espaceDeJeu.append(recupererMarqueDeLaPosition(x, y));
-			}
-			espaceDeJeu.append(Constante.MARQUE_FIN_LIGNE);
-		}
-		return espaceDeJeu.toString();
-	}
-
-	public boolean aUnEnvahisseurQuiOccupeLaPosition(int x, int y) {
-		return this.aUnEnvahisseur() && aUnEnvahisseurQuiOccupe(x, y);
-	}
-
-	public boolean aUnEnvahisseurQuiOccupe(int x, int y) {
-		return envahisseur.occupeLaPosition(x, y);
-	}
-
-	public boolean aUnEnvahisseur() {
-		return envahisseur != null;
-	}
-
-	public Envahisseur getEnvahisseur() {
-		return this.envahisseur;
 	}
 
 	public void deplacerEnvahisseurVersLaDroite() {
@@ -235,4 +191,99 @@ public class SpaceInvaders implements Jeu {
 		}
 	}
 
+	public void deplacerMissile(int index) {
+		this.missiles.get(index).deplacerVerticalementVers(Direction.HAUT_ECRAN);
+	}
+
+	private void detruireMissile(int indexMissiles) {
+		this.missiles.remove(indexMissiles);
+		nombreDeMissile--;
+	}
+
+	private void detruireEnvahisseur() {
+		this.envahisseur = null;
+	}
+
+	public Vaisseau getVaisseau() {
+		return this.vaisseau;
+	}
+
+	public Envahisseur getEnvahisseur() {
+		return this.envahisseur;
+	}
+
+	private boolean aUnMissileQuiOccupeLaPosition(int x, int y) {
+		return this.aUnMissile() && aUnMissileQuiOccupe(x, y);
+	}
+
+	public boolean aUnMissileQuiOccupe(int x, int y) {
+		for (int i = 0; i < this.missiles.size(); i++) {
+			if (this.aUnMissile() && this.missiles.get(i).occupeLaPosition(x, y)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean aUnMissile() {
+		return !this.missiles.isEmpty();
+	}
+
+	@Override
+	public boolean etreFini() {
+		return fini;
+	}
+
+	public boolean aUnVaisseauQuiOccupeLaPosition(int x, int y) {
+		return this.aUnVaisseau() && aUnVaisseauQuiOccupe(x, y);
+	}
+
+	public boolean aUnVaisseauQuiOccupe(int x, int y) {
+		return vaisseau.occupeLaPosition(x, y);
+	}
+
+	public boolean aUnVaisseau() {
+		return vaisseau != null;
+	}
+
+	private boolean estDansEspaceJeu(int x, int y) {
+		return ((x >= 0) && (x < longueur)) && ((y >= 0) && (y < hauteur));
+	}
+
+	public boolean aUnEnvahisseurQuiOccupeLaPosition(int x, int y) {
+		return this.aUnEnvahisseur() && aUnEnvahisseurQuiOccupe(x, y);
+	}
+
+	public boolean aUnEnvahisseurQuiOccupe(int x, int y) {
+		return envahisseur.occupeLaPosition(x, y);
+	}
+
+	public boolean aUnEnvahisseur() {
+		return envahisseur != null;
+	}
+
+	private char recupererMarqueDeLaPosition(int x, int y) {
+		char marque;
+		if (aUnVaisseauQuiOccupeLaPosition(x, y)) {
+			marque = Constante.MARQUE_VAISSEAU;
+		} else if (aUnMissileQuiOccupeLaPosition(x, y)) {
+			marque = Constante.MARQUE_MISSILE;
+		} else if (aUnEnvahisseurQuiOccupeLaPosition(x, y)) {
+			marque = Constante.MARQUE_ENVAHISSEUR;
+		} else {
+			marque = Constante.MARQUE_VIDE;
+		}
+		return marque;
+	}
+
+	public String recupererEspaceJeuDansChaineASCII() {
+		StringBuilder espaceDeJeu = new StringBuilder();
+		for (int y = 0; y < hauteur; y++) {
+			for (int x = 0; x < longueur; x++) {
+				espaceDeJeu.append(recupererMarqueDeLaPosition(x, y));
+			}
+			espaceDeJeu.append(Constante.MARQUE_FIN_LIGNE);
+		}
+		return espaceDeJeu.toString();
+	}
 }
