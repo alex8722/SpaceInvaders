@@ -107,7 +107,6 @@ public class SpaceInvaders implements Jeu {
 					Missile missile = this.vaisseau.tirerUnMissile(dimension, vitesse);
 					this.missiles.add(missile);
 					nombreDeMissile++;
-					System.out.println("Pan");
 				}
 			}
 		}
